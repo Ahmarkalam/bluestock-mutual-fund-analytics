@@ -96,3 +96,166 @@ performance.to_csv(
 
 print("\nScheme Performance cleaned successfully.")
 print("Rows:", len(performance))
+
+# -----------------------------
+# Clean Fund Master
+# -----------------------------
+
+fund = pd.read_csv(os.path.join(RAW_PATH, "01_fund_master.csv"))
+
+# Convert launch date
+fund["launch_date"] = pd.to_datetime(fund["launch_date"])
+
+# Remove duplicates
+fund = fund.drop_duplicates()
+
+# Trim text columns
+text_cols = [
+    "fund_house",
+    "scheme_name",
+    "category",
+    "sub_category",
+    "plan",
+    "benchmark",
+    "fund_manager",
+    "risk_category",
+    "sebi_category_code"
+]
+
+for col in text_cols:
+    fund[col] = fund[col].str.strip()
+
+fund.to_csv(
+    os.path.join(PROCESSED_PATH, "01_fund_master_clean.csv"),
+    index=False
+)
+
+print("Fund Master cleaned successfully.")
+print("Rows:", len(fund))
+
+# -----------------------------
+# Clean AUM by Fund House
+# -----------------------------
+
+aum = pd.read_csv(os.path.join(RAW_PATH, "03_aum_by_fund_house.csv"))
+
+aum["date"] = pd.to_datetime(aum["date"])
+
+aum = aum.sort_values("date")
+
+aum = aum.drop_duplicates()
+
+aum = aum[aum["aum_crore"] > 0]
+
+aum.to_csv(
+    os.path.join(PROCESSED_PATH, "03_aum_by_fund_house_clean.csv"),
+    index=False
+)
+
+print("AUM cleaned successfully.")
+print("Rows:", len(aum))
+
+# -----------------------------
+# Clean SIP Inflows
+# -----------------------------
+
+sip = pd.read_csv(os.path.join(RAW_PATH, "04_monthly_sip_inflows.csv"))
+
+sip = sip.drop_duplicates()
+
+sip["month"] = pd.to_datetime(sip["month"])
+
+sip = sip[sip["sip_inflow_crore"] > 0]
+
+sip.to_csv(
+    os.path.join(PROCESSED_PATH, "04_monthly_sip_inflows_clean.csv"),
+    index=False
+)
+
+print("SIP Inflows cleaned successfully.")
+print("Rows:", len(sip))
+
+# -----------------------------
+# Clean Category Inflows
+# -----------------------------
+
+category = pd.read_csv(os.path.join(RAW_PATH, "05_category_inflows.csv"))
+
+category["month"] = pd.to_datetime(category["month"])
+
+category = category.drop_duplicates()
+
+category["category"] = category["category"].str.strip()
+
+category.to_csv(
+    os.path.join(PROCESSED_PATH, "05_category_inflows_clean.csv"),
+    index=False
+)
+
+print("Category Inflows cleaned successfully.")
+print("Rows:", len(category))
+
+# -----------------------------
+# Clean Industry Folio Count
+# -----------------------------
+
+folio = pd.read_csv(os.path.join(RAW_PATH, "06_industry_folio_count.csv"))
+
+folio["month"] = pd.to_datetime(folio["month"])
+
+folio = folio.drop_duplicates()
+
+folio = folio[folio["total_folios_crore"] > 0]
+
+folio.to_csv(
+    os.path.join(PROCESSED_PATH, "06_industry_folio_count_clean.csv"),
+    index=False
+)
+
+print("Industry Folio cleaned successfully.")
+print("Rows:", len(folio))
+
+# -----------------------------
+# Clean Portfolio Holdings
+# -----------------------------
+
+holdings = pd.read_csv(os.path.join(RAW_PATH, "09_portfolio_holdings.csv"))
+
+holdings["portfolio_date"] = pd.to_datetime(holdings["portfolio_date"])
+
+holdings = holdings.drop_duplicates()
+
+holdings = holdings[holdings["weight_pct"] >= 0]
+
+holdings = holdings[holdings["market_value_cr"] > 0]
+
+holdings.to_csv(
+    os.path.join(PROCESSED_PATH, "09_portfolio_holdings_clean.csv"),
+    index=False
+)
+
+print("Portfolio Holdings cleaned successfully.")
+print("Rows:", len(holdings))
+
+# -----------------------------
+# Clean Benchmark Indices
+# -----------------------------
+
+benchmark = pd.read_csv(os.path.join(RAW_PATH, "10_benchmark_indices.csv"))
+
+benchmark["date"] = pd.to_datetime(benchmark["date"])
+
+benchmark = benchmark.sort_values("date")
+
+benchmark = benchmark.drop_duplicates()
+
+benchmark = benchmark[benchmark["close_value"] > 0]
+
+benchmark.to_csv(
+    os.path.join(PROCESSED_PATH, "10_benchmark_indices_clean.csv"),
+    index=False
+)
+
+print("Benchmark cleaned successfully.")
+print("Rows:", len(benchmark))
+
